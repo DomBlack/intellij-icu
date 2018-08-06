@@ -16,6 +16,13 @@ public class IcuColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Language ID", IcuSyntaxHighlighter.LANG_ID),
             new AttributesDescriptor("Key", IcuSyntaxHighlighter.ID),
             new AttributesDescriptor("Message", IcuSyntaxHighlighter.STRING),
+            new AttributesDescriptor("Parameter", IcuSyntaxHighlighter.PARAMETER),
+            new AttributesDescriptor("Comma", IcuSyntaxHighlighter.COMMA),
+            new AttributesDescriptor("Format Type", IcuSyntaxHighlighter.FORMAT_TYPE),
+            new AttributesDescriptor("Operator", IcuSyntaxHighlighter.OPERATOR),
+            new AttributesDescriptor("Placeholder", IcuSyntaxHighlighter.PLACEHOLDER),
+            new AttributesDescriptor("Number", IcuSyntaxHighlighter.NUMBER),
+            new AttributesDescriptor("Select Option", IcuSyntaxHighlighter.OPTION_NAME),
             new AttributesDescriptor("Valid Escape String", IcuSyntaxHighlighter.VALID_ESCAPE),
             new AttributesDescriptor("Invalid Escape String", IcuSyntaxHighlighter.INVALID_ESCAPE),
             new AttributesDescriptor("Comment", IcuSyntaxHighlighter.COMMENT),
@@ -41,10 +48,11 @@ public class IcuColorSettingsPage implements ColorSettingsPage {
                 "    hello {\n" +
                 "      // This is a line comment\n" +
                 "      \"Welcome back {userName}, \"\n" +
-                "      \"you have {unread, number} \"\n" +
+                "      \"you have \"\n" +
                 "      \"{unread, plural, \"\n" +
-                "      \"  =1 {message}\"\n" +
-                "      \"  other {messages}\"\n" +
+                "      \"  =0 {no messages}\"\n" +
+                "      \"  one {# message}\"\n" +
+                "      \"  other {# messages}\"\n" +
                 "      \"}.\"\n" +
                 "    }\n" +
                 "\n" +

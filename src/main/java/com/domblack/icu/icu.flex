@@ -35,33 +35,30 @@ import com.intellij.util.containers.Stack;
 CRLF=\R
 WHITE_SPACE=[\ \n\t\f]
 
-//NUMBER   = '0' | [1-9] [0-9]*
-//ARGUMENT = [^ \t\n\r,.+={}#]+ | {NUMBER}
-//OPTION_NAME = [^ \t\n\r,.+={}#]+
-//
+NUMBER   = "0" | [1-9] [0-9]*
+OPTION_NAME = [^ \t\n\r,.+={}#]+
 HEX_DIGITS      = [0-9a-fA-F]{4}
-CHARS          = ([^{}\\\0-\x1F\x7f \t\n\r] | "\\\\" | "\\#" | "\\{" | "\\}" | ("\\u" {HEX_DIGITS}))+
-//FORMAT         = "number" | "date" | "time" | "plural" | "selectordinal" | "select"
-LEFT_BRACE     = "{"
-RIGHT_BRACE    = "}"
-QUOTE          = "\""
-//COMMA          = ","
-//EQUALS         = '='
+FORMAT          = "number" | "date" | "time" | "plural" | "selectordinal" | "select"
+LEFT_BRACE      = "{"
+RIGHT_BRACE     = "}"
+QUOTE           = "\""
+COMMA           = ","
+EQUALS          = "="
+HASH            = "#"
 
 ID      = [a-zA-Z][a-zA-Z0-9]*
 ESCAPED = "\\\\" | "\\\"" | "\\#" | "\\{" | "\\}" | ("\\u" {HEX_DIGITS})
 INVALID_ESCAPE = ("\\" [^\" \t\n\r])
-STRING  = ([^\\\"])+
+STRING  = ([^{}\\\0-\x1F\x7f\" \t\n\r#])+
 
 END_OF_LINE_COMMENT=("//")[^\r\n]*
 
-//%state IN_NESTED_FORMAT
-//%state IN_ARGUMENT_ELEMENT
-//%state IN_ARGUMENT_TYPE
-//%state IN_FORMAT
-
 %state IN_BLOCK
 %state IN_STRING
+%state IN_ARG_STRING
+%state IN_ARGUMENT
+%state IN_ARGUMENT_TYPE
+%state IN_ARGUMENT_PARAMS
 
 %%
 
@@ -78,36 +75,47 @@ END_OF_LINE_COMMENT=("//")[^\r\n]*
 
 <IN_STRING> {
     {STRING}         { return IcuTypes.STRING; }
+    {HASH}           { return IcuTypes.STRING; } // Not a placeholder!
     {ESCAPED}        { return IcuTypes.VALID_ESCAPE_STRING; }
     {INVALID_ESCAPE} { return IcuTypes.INVALID_ESCAPE_STRING; }
     {QUOTE}          { yybegin(IN_BLOCK); return IcuTypes.QUOTE; }
+    {LEFT_BRACE}     { yypushState(IN_ARGUMENT); return IcuTypes.ARG_LEFT_BRACE; }
 }
 
-//<IN_NESTED_FORMAT> {
-//    {CHARS}      { return IcuTypes.CHARS; }
-//    {RIGHT_BRACE} { yypopState(); return IcuTypes.RIGHT_BRACE; }
-//    {LEFT_BRACE} { yypushState(IN_ARGUMENT_ELEMENT); return IcuTypes.LEFT_BRACE; }
-//}
-//
-//<IN_ARGUMENT_ELEMENT> {
-//    {ARGUMENT}          { yybegin(IN_ARGUMENT_TYPE); return IcuTypes.ARGUMENT; }
-//}
-//
-//<IN_ARGUMENT_TYPE> {
-//    {RIGHT_BRACE}       { yypopState(); return IcuTypes.RIGHT_BRACE; }
-//    {COMMA}             { return IcuTypes.COMMA; }
-//    {FORMAT}            { yybegin(IN_FORMAT); return IcuTypes.FORMAT_TYPE; }
-//}
-//
-//<IN_FORMAT> {
-//    {LEFT_BRACE}        { yypushState(IN_NESTED_FORMAT); return IcuTypes.LEFT_BRACE; }
-//    {RIGHT_BRACE}       { yypopState(); return IcuTypes.RIGHT_BRACE; }
-//    {COMMA}             { return IcuTypes.COMMA; }
-//    {EQUALS}            { return IcuTypes.EQUALS; }
-//    {NUMBER}            { return IcuTypes.NUMBER; }
-//    {OPTION_NAME}       { return IcuTypes.OPTION_NAME; }
-//}
+// This is the same as IN_STRING apart from QUOTE does not go back to the IN_BLOCK and we have a RIGHT_BRACE
+// which pops state - also HASH is different
+<IN_ARG_STRING> {
+    {STRING}         { return IcuTypes.STRING; }
+    {HASH}           { return IcuTypes.PLACEHOLDER; } // Placeholder
+    {ESCAPED}        { return IcuTypes.VALID_ESCAPE_STRING; }
+    {INVALID_ESCAPE} { return IcuTypes.INVALID_ESCAPE_STRING; }
+    {QUOTE}          { return IcuTypes.QUOTE; }
+    {LEFT_BRACE}     { yypushState(IN_ARGUMENT); return IcuTypes.ARG_LEFT_BRACE; }
+    {RIGHT_BRACE}    { yypopState(); return IcuTypes.ARG_RIGHT_BRACE; }
+}
 
+<IN_ARGUMENT> {
+    {RIGHT_BRACE}    { yypopState(); return IcuTypes.ARG_RIGHT_BRACE; }
+    {QUOTE}          { return IcuTypes.QUOTE; }
+    {ID}             { return IcuTypes.PARAMETER; }
+    {COMMA}          { yybegin(IN_ARGUMENT_TYPE); return IcuTypes.COMMA; }
+}
+
+<IN_ARGUMENT_TYPE> {
+    {RIGHT_BRACE}    { yypopState(); return IcuTypes.ARG_RIGHT_BRACE; }
+    {QUOTE}          { return IcuTypes.QUOTE; }
+    {COMMA}          { yybegin(IN_ARGUMENT_PARAMS); return IcuTypes.COMMA; }
+    {FORMAT}         { return IcuTypes.FORMAT_TYPE; }
+}
+
+<IN_ARGUMENT_PARAMS> {
+    {LEFT_BRACE}     { yypushState(IN_ARG_STRING); return IcuTypes.ARG_LEFT_BRACE; }
+    {RIGHT_BRACE}    { yypopState(); return IcuTypes.ARG_RIGHT_BRACE; }
+    {QUOTE}          { return IcuTypes.QUOTE; }
+    {EQUALS}         { return IcuTypes.EQUALS; }
+    {NUMBER}         { return IcuTypes.NUMBER; }
+    {OPTION_NAME}    { return IcuTypes.OPTION_NAME; }
+}
 
 {END_OF_LINE_COMMENT}                     { return IcuTypes.COMMENT; }
 ({CRLF}|{WHITE_SPACE})+                   { return TokenType.WHITE_SPACE; }

@@ -14,11 +14,13 @@
     psiImplUtilClass="com.domblack.icu.psi.impl.IcuImplUtil"
 
     tokens = [
-        LEFT_BRACE  = '{'
-        RIGHT_BRACE = '}'
+        LEFT_BRACE  = 'FILE {'
+        RIGHT_BRACE = 'FILE }'
+        ARG_LEFT_BRACE = 'ARG {'
+        ARG_RIGHT_BRACE = 'ARG }'
         COMMA      = ','
         EQUALS     = '='
-        FORMAT_TYPE = 'FORMAT_TYPE'
+        FORMAT_TYPE = 'number|date|time|plural|select|selectordinal'
         WHITE_SPACE = 'regexp:\s'
         COMMENT     = '//'
     ]
@@ -43,33 +45,27 @@ message ::= ID messageBlock {
 // This is separate for formatting reasons so we can align the left brace!
 messageBlock ::= LEFT_BRACE (QUOTE messageString* QUOTE) (QUOTE messageString* QUOTE)*  RIGHT_BRACE
 
-messageString ::= STRING | VALID_ESCAPE_STRING | INVALID_ESCAPE_STRING
+messageString ::= argumentElement | STRING | PLACEHOLDER | VALID_ESCAPE_STRING | INVALID_ESCAPE_STRING
 
-//icuFile ::= messageFormatPattern
-//
-//private ws_ ::= WHITE_SPACE*
-//
-//messageFormatPattern ::= messageTextElement
-//                       | argumentElement
-//
-//messageTextElement ::= (ws_ CHARS ws_)+
-//
-//argumentElement ::= LEFT_BRACE ws_ ARGUMENT ws_ elementFormat? ws_ RIGHT_BRACE
-//
-//elementFormat ::= COMMA ws_ (simpleFormat | pluralFormat | selectOrdinalFormat | selectFormat)
-//
-//simpleFormat ::= ('number' | 'date' | 'time') ws_ (COMMA CHARS)?
-//
-//pluralFormat ::= 'plural' ws_ COMMA ws_ pluralStyle
-//
-//selectOrdinalFormat ::= 'selectordinal' ws_ COMMA ws_ pluralStyle
-//
-//selectFormat ::= 'select' ws_ COMMA ws_ optionalFormatPattern+
-//
-//selector ::= (EQUALS NUMBER) | OPTION_NAME
-//
-//optionalFormatPattern ::= selector ws_ LEFT_BRACE ws_ messageFormatPattern ws_ RIGHT_BRACE
-//
-//offset ::= 'offset:' ws_ NUMBER
-//
-//pluralStyle ::= offset? ws_ optionalFormatPattern+
+// This is a handler incase the argument is split onto multiple new lines
+private newLine_ ::= (QUOTE QUOTE)?
+
+argumentElement ::= ARG_LEFT_BRACE newLine_ PARAMETER elementFormat? newLine_ ARG_RIGHT_BRACE
+
+elementFormat ::= newLine_? COMMA newLine_ (simpleFormat | pluralFormat | selectOrdinalFormat | selectFormat)
+
+simpleFormat ::= ('number' | 'date' | 'time') newLine_ (COMMA OPTION_NAME)?
+
+pluralFormat ::= 'plural' newLine_ COMMA newLine_ pluralStyle
+
+selectOrdinalFormat ::= 'selectordinal' newLine_ COMMA newLine_ pluralStyle
+
+selectFormat ::= 'select' newLine_ COMMA (newLine_ optionalFormatPattern)+
+
+selector ::= (EQUALS NUMBER) | OPTION_NAME
+
+optionalFormatPattern ::= selector newLine_ ARG_LEFT_BRACE (newLine_ messageString)* newLine_ ARG_RIGHT_BRACE
+
+offset ::= 'offset:' newLine_ NUMBER
+
+pluralStyle ::= offset? (newLine_ optionalFormatPattern)+

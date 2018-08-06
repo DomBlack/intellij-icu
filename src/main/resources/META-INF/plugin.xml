@@ -1,18 +1,17 @@
-<idea-plugin>
-    <id>com.domblack.icu-language-plugin</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+<idea-plugin url="https://github.com/DomBlack/intellij-icu">
+    <name>ICU</name>
+    <id>ICU</id>
+    <vendor url="https://github.com/DomBlack/intellij-icu">Dom Black</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+        This plugin gives IntelliJ syntax highlighting for ICU Resource Bundles.
+
+        <img src="https://github.com/DomBlack/intellij-icu/blob/master/media/screenshot.png?raw=true" />
     ]]></description>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
+    <category>Languages</category>
+
     <depends>com.intellij.modules.lang</depends>
-    -->
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.domblack.icu.IcuFileTypeFactory"/>
@@ -32,8 +31,4 @@
     <extensions defaultExtensionNs="com.intellij.spellchecker">
         <support language="ICU" implementationClass="com.domblack.icu.IcuSpellCheckerStrategy"/>
     </extensions>
-
-    <actions>
-        <!-- Add Actions here -->
-    </actions>
 </idea-plugin>
