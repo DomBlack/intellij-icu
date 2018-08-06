@@ -1,0 +1,75 @@
+{
+    parserClass="com.domblack.icu.IcuParser"
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix="Icu"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.domblack.icu"
+    psiImplPackage="com.domblack.icu.psi.impl"
+
+    elementTypeHolderClass="com.domblack.icu.psi.IcuTypes"
+    elementTypeClass="com.domblack.icu.psi.IcuElementType"
+    tokenTypeClass="com.domblack.icu.psi.IcuTokenType"
+
+    psiImplUtilClass="com.domblack.icu.psi.impl.IcuImplUtil"
+
+    tokens = [
+        LEFT_BRACE  = '{'
+        RIGHT_BRACE = '}'
+        COMMA      = ','
+        EQUALS     = '='
+        FORMAT_TYPE = 'FORMAT_TYPE'
+        WHITE_SPACE = 'regexp:\s'
+        COMMENT     = '//'
+    ]
+}
+
+icuFile ::= languageKey LEFT_BRACE (message | block)* RIGHT_BRACE
+
+languageKey ::= LANG_ID
+
+block ::= (ID LEFT_BRACE (message | block)* RIGHT_BRACE) {
+    mixin="com.domblack.icu.psi.impl.IcuNamedElementImpl"
+    implements="com.domblack.icu.psi.IcuNamedElement"
+    methods=[getID getPresentation getName setName getNameIdentifier]
+}
+
+message ::= ID messageBlock {
+    mixin="com.domblack.icu.psi.impl.IcuNamedElementImpl"
+    implements="com.domblack.icu.psi.IcuNamedElement"
+    methods=[getID getPresentation getName setName getNameIdentifier]
+}
+
+// This is separate for formatting reasons so we can align the left brace!
+messageBlock ::= LEFT_BRACE (QUOTE messageString* QUOTE) (QUOTE messageString* QUOTE)*  RIGHT_BRACE
+
+messageString ::= STRING | VALID_ESCAPE_STRING | INVALID_ESCAPE_STRING
+
+//icuFile ::= messageFormatPattern
+//
+//private ws_ ::= WHITE_SPACE*
+//
+//messageFormatPattern ::= messageTextElement
+//                       | argumentElement
+//
+//messageTextElement ::= (ws_ CHARS ws_)+
+//
+//argumentElement ::= LEFT_BRACE ws_ ARGUMENT ws_ elementFormat? ws_ RIGHT_BRACE
+//
+//elementFormat ::= COMMA ws_ (simpleFormat | pluralFormat | selectOrdinalFormat | selectFormat)
+//
+//simpleFormat ::= ('number' | 'date' | 'time') ws_ (COMMA CHARS)?
+//
+//pluralFormat ::= 'plural' ws_ COMMA ws_ pluralStyle
+//
+//selectOrdinalFormat ::= 'selectordinal' ws_ COMMA ws_ pluralStyle
+//
+//selectFormat ::= 'select' ws_ COMMA ws_ optionalFormatPattern+
+//
+//selector ::= (EQUALS NUMBER) | OPTION_NAME
+//
+//optionalFormatPattern ::= selector ws_ LEFT_BRACE ws_ messageFormatPattern ws_ RIGHT_BRACE
+//
+//offset ::= 'offset:' ws_ NUMBER
+//
+//pluralStyle ::= offset? ws_ optionalFormatPattern+

@@ -1,0 +1,39 @@
+<idea-plugin>
+    <id>com.domblack.icu-language-plugin</id>
+    <name>Plugin display name here</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.domblack.icu.IcuFileTypeFactory"/>
+        <lang.parserDefinition language="ICU" implementationClass="com.domblack.icu.IcuParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="ICU" implementationClass="com.domblack.icu.IcuSyntaxHighlighterFactory" />
+        <lang.psiStructureViewFactory language="ICU" implementationClass="com.domblack.icu.IcuStructureViewFactory" />
+        <lang.commenter language="ICU" implementationClass="com.domblack.icu.IcuCommenter" />
+        <lang.braceMatcher language="ICU" implementationClass="com.domblack.icu.IcuPairedBraceMatcher" />
+        <lang.formatter language="ICU" implementationClass="com.domblack.icu.IcuFormattingModelBuilder" />
+        <colorSettingsPage implementation="com.domblack.icu.IcuColorSettingsPage" />
+        <completion.contributor language="ICU" implementationClass="com.domblack.icu.IcuCompletionContributor" />
+        <gotoSymbolContributor implementation="com.domblack.icu.IcuChooseByNameContributor" />
+        <annotator language="ICU" implementationClass="com.domblack.icu.IcuAnnotator" />
+        <breadcrumbsInfoProvider implementation="com.domblack.icu.IcuBreadcrumbsProvider" />
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij.spellchecker">
+        <support language="ICU" implementationClass="com.domblack.icu.IcuSpellCheckerStrategy"/>
+    </extensions>
+
+    <actions>
+        <!-- Add Actions here -->
+    </actions>
+</idea-plugin>
