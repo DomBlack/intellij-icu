@@ -1,0 +1,25 @@
+en {
+    homePage {
+        title { "Hello World" }
+
+        paragraphs {
+            welcome {
+                "Welcome back {userName}, you have "
+                "{unreadMsg, plural, "
+                    "=0 {no unread messages}"
+                    "one {# unread message}"
+                    "other {# unread messages}"
+                "}."
+            }
+
+            rights {
+                "{adminLevel, select, "
+                    "admin   {Site Administrator}"
+                    "support {Support Staff}"
+                    "user    {User}"
+                    "other   {Guest}"
+                "}"
+            }
+        }
+    }
+}

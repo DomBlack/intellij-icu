@@ -45,12 +45,61 @@ public class IcuFormattingContext {
                 .around(IcuTypes.RIGHT_BRACE)
                 .spaces(1)
 
+                .after(IcuTypes.ARG_LEFT_BRACE)
+                .none()
+
+                .before(IcuTypes.ARG_RIGHT_BRACE)
+                .none()
+
+                .before(IcuTypes.COMMA)
+                .none()
+
+                .after(IcuTypes.COMMA)
+                .spaces(1)
+
+                .between(IcuTypes.COMMA, IcuTypes.QUOTE)
+                .none()
+
+                .between(IcuTypes.MESSAGE, IcuTypes.BLOCK)
+                .blankLines(1)
+
+                .between(IcuTypes.BLOCK, IcuTypes.MESSAGE)
+                .blankLines(1)
+
+                .between(IcuTypes.BLOCK, IcuTypes.BLOCK)
+                .blankLines(1)
+
+                .between(IcuTypes.MESSAGE, IcuTypes.MESSAGE)
+                .spacing(0, 1, 0, true, 1)
+
+                .between(IcuTypes.ID, IcuTypes.LEFT_BRACE)
+                .spacing(1, 1, 0, false, 0)
+
                 ;
     }
 
     public Alignment computeAlignment(@NotNull ASTNode node) {
         IElementType type = PsiUtilCore.getElementType(node);
 
+        // Align option text within formats
+        if (type == IcuTypes.ARG_LEFT_BRACE && node.getTreeParent().getElementType() == IcuTypes.OPTIONAL_FORMAT_PATTERN) {
+            final ASTNode grandParent = node.getTreeParent().getTreeParent();
+
+            // Use the alignment of the grandparent
+            return myChildIndentAlignments.get(grandParent);
+        }
+
+        // If we get a multiline option contents, stop the alignment
+        if (type == IcuTypes.OPTION_CONTENTS_PER_LINE) {
+            final ASTNode optionsList = node
+                    .getTreeParent() // OPTION_CONTENTS
+                    .getTreeParent() // OPTIONAL_FORMAT_PATTERN
+                    .getTreeParent(); // OPTIONS_LIST
+
+            myChildIndentAlignments.remove(optionsList);
+        }
+
+        // Align message blocks
         if (type == IcuTypes.MESSAGE_BLOCK) {
             final ASTNode grandParent = node.getTreeParent().getTreeParent();
 

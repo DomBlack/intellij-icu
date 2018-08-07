@@ -16,8 +16,8 @@ public class IcuChooseByNameContributor implements ChooseByNameContributor {
         List<String> names = new ArrayList<>(properties.size());
 
         for (IcuMessage property : properties) {
-            if (property.getID() != null && property.getID().length() > 0) {
-                names.add(property.getID());
+            if (property.getName() != null && property.getName().length() > 0) {
+                names.add(property.getName());
             }
         }
 

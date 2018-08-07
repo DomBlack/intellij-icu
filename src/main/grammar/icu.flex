@@ -18,8 +18,6 @@ import com.intellij.util.containers.Stack;
 %eof}
 
 %{
-      StringBuffer string = new StringBuffer();
-
    private Stack<Integer> stack = new Stack<>();
 
    public void yypushState(int newState) {
@@ -35,10 +33,12 @@ import com.intellij.util.containers.Stack;
 CRLF=\R
 WHITE_SPACE=[\ \n\t\f]
 
-NUMBER   = "0" | [1-9] [0-9]*
-OPTION_NAME = [^ \t\n\r,.+={}#]+
+NUMBER          = "-"? ("0" | ([1-9] [0-9]*))
+OPTION_KEYWORD  = "other" | "zero" | "one" | "two" | "few" | "many"
+OPTION_NAME     = [^ \t\n\r,.+={}#:\"]+
 HEX_DIGITS      = [0-9a-fA-F]{4}
 FORMAT          = "number" | "date" | "time" | "plural" | "selectordinal" | "select"
+OFFSET          = "offset:"
 LEFT_BRACE      = "{"
 RIGHT_BRACE     = "}"
 QUOTE           = "\""
@@ -46,10 +46,11 @@ COMMA           = ","
 EQUALS          = "="
 HASH            = "#"
 
-ID      = [a-zA-Z][a-zA-Z0-9]*
-ESCAPED = "\\\\" | "\\\"" | "\\#" | "\\{" | "\\}" | ("\\u" {HEX_DIGITS})
-INVALID_ESCAPE = ("\\" [^\" \t\n\r])
-STRING  = ([^{}\\\0-\x1F\x7f\" \t\n\r#])+
+ID              = [a-zA-Z][a-zA-Z0-9]*
+INVARIANT_CHARS = ([A-Z] | [a-z] | [0-9] | "%" | "&" | "'" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" | "_")+
+ESCAPED         = "\\\\" | "\\\"" | "\\#" | "\\{" | "\\}" | ("\\u" {HEX_DIGITS})
+INVALID_ESCAPE  = ("\\" [^\" \t\n\r])
+STRING          = ([^{}\\\0-\x1F\x7f\" \t\n\r#])+
 
 END_OF_LINE_COMMENT=("//")[^\r\n]*
 
@@ -67,10 +68,10 @@ END_OF_LINE_COMMENT=("//")[^\r\n]*
 }
 
 <IN_BLOCK> {
-    {LEFT_BRACE}    { return IcuTypes.LEFT_BRACE; }
-    {RIGHT_BRACE}   { return IcuTypes.RIGHT_BRACE; }
-    {QUOTE}         { yybegin(IN_STRING); return IcuTypes.QUOTE; }
-    {ID}            { return IcuTypes.ID; }
+    {LEFT_BRACE}      { return IcuTypes.LEFT_BRACE; }
+    {RIGHT_BRACE}     { return IcuTypes.RIGHT_BRACE; }
+    {QUOTE}           { yybegin(IN_STRING); return IcuTypes.QUOTE; }
+    {INVARIANT_CHARS} { return IcuTypes.ID; }
 }
 
 <IN_STRING> {
@@ -114,10 +115,11 @@ END_OF_LINE_COMMENT=("//")[^\r\n]*
     {QUOTE}          { return IcuTypes.QUOTE; }
     {EQUALS}         { return IcuTypes.EQUALS; }
     {NUMBER}         { return IcuTypes.NUMBER; }
+    {OFFSET}         { return IcuTypes.OFFSET_KW; }
+    {OPTION_KEYWORD} { return IcuTypes.OPTION_KEYWORD; }
     {OPTION_NAME}    { return IcuTypes.OPTION_NAME; }
 }
 
 {END_OF_LINE_COMMENT}                     { return IcuTypes.COMMENT; }
 ({CRLF}|{WHITE_SPACE})+                   { return TokenType.WHITE_SPACE; }
-
 .                                         { return TokenType.BAD_CHARACTER; }

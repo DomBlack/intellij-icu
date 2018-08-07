@@ -36,6 +36,9 @@ public class IcuSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey FORMAT_TYPE =
             createTextAttributesKey("FORMAT_TYPE", DefaultLanguageHighlighterColors.KEYWORD);
 
+    public static final TextAttributesKey OPTION_KEYWORD =
+            createTextAttributesKey("OPTION_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
+
     public static final TextAttributesKey OPERATOR =
             createTextAttributesKey("OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
 
@@ -67,6 +70,7 @@ public class IcuSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] PLACEHOLDER_KEYS = new TextAttributesKey[]{STRING, PLACEHOLDER};
     private static final TextAttributesKey[] PARAMETER_KEYS = new TextAttributesKey[]{PARAMETER};
     private static final TextAttributesKey[] FORMAT_TYPE_KEYS = new TextAttributesKey[]{FORMAT_TYPE};
+    private static final TextAttributesKey[] OPTION_KEYWORD_KEYS = new TextAttributesKey[]{OPTION_NAME, OPTION_KEYWORD};
     private static final TextAttributesKey[] OPERATOR_KEYS = new TextAttributesKey[]{OPERATOR};
     private static final TextAttributesKey[] COMMA_KEYS = new TextAttributesKey[]{COMMA};
     private static final TextAttributesKey[] NUMBER_KEYS = new TextAttributesKey[]{NUMBER};
@@ -99,6 +103,8 @@ public class IcuSyntaxHighlighter extends SyntaxHighlighterBase {
             return PARAMETER_KEYS;
         } else if (tokenType.equals(IcuTypes.FORMAT_TYPE)) {
             return FORMAT_TYPE_KEYS;
+        } else if (tokenType.equals(IcuTypes.OPTION_KEYWORD)) {
+            return OPTION_KEYWORD_KEYS;
         } else if (tokenType.equals(IcuTypes.EQUALS)) {
             return OPERATOR_KEYS;
         } else if (tokenType.equals(IcuTypes.PLACEHOLDER)) {

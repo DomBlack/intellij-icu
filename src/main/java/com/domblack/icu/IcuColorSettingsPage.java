@@ -22,7 +22,8 @@ public class IcuColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Operator", IcuSyntaxHighlighter.OPERATOR),
             new AttributesDescriptor("Placeholder", IcuSyntaxHighlighter.PLACEHOLDER),
             new AttributesDescriptor("Number", IcuSyntaxHighlighter.NUMBER),
-            new AttributesDescriptor("Select Option", IcuSyntaxHighlighter.OPTION_NAME),
+            new AttributesDescriptor("Option Case", IcuSyntaxHighlighter.OPTION_NAME),
+            new AttributesDescriptor("Option Keyword", IcuSyntaxHighlighter.OPTION_KEYWORD),
             new AttributesDescriptor("Valid Escape String", IcuSyntaxHighlighter.VALID_ESCAPE),
             new AttributesDescriptor("Invalid Escape String", IcuSyntaxHighlighter.INVALID_ESCAPE),
             new AttributesDescriptor("Comment", IcuSyntaxHighlighter.COMMENT),
@@ -47,8 +48,9 @@ public class IcuColorSettingsPage implements ColorSettingsPage {
                 "  messages {\n" +
                 "    hello {\n" +
                 "      // This is a line comment\n" +
-                "      \"Welcome back {userName}, \"\n" +
-                "      \"you have \"\n" +
+                "      \"Welcome back {userLevel, select,\"\n"+
+                "        \"admin {Administrator} other {}\"\n"+
+                "      } {userName}, you have \"\n" +
                 "      \"{unread, plural, \"\n" +
                 "      \"  =0 {no messages}\"\n" +
                 "      \"  one {# message}\"\n" +

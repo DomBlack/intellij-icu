@@ -46,6 +46,8 @@ public class IcuFormattingBlock extends AbstractBlock {
             || myNode.getElementType() == IcuTypes.MESSAGE_BLOCK
             || myNode.getElementType() == IcuTypes.QUOTE
             || myNode.getElementType() == IcuTypes.COMMENT
+            || myNode.getElementType() == IcuTypes.OPTIONS_PER_LINE
+            || myNode.getElementType() == IcuTypes.OPTION_CONTENTS_PER_LINE
         ) {
             return Indent.getNormalIndent();
         } else {

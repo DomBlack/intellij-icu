@@ -1,10 +1,15 @@
 plugins {
+    id 'idea'
     id 'java'
     id 'org.jetbrains.intellij' version '0.3.5'
+    id 'org.jetbrains.grammarkit' version '2018.1.7'
+    id 'com.gradle.build-scan' version '1.15.1'
 }
 
 group 'com.domblack'
-version '1.0'
+version '1.0.1'
+
+def generatedFolder = file("src/main/generated")
 
 sourceCompatibility = 1.8
 
@@ -22,11 +27,52 @@ intellij {
     pluginName 'ICU'
 }
 
+apply plugin: 'idea'
+idea {
+    module {
+        generatedSourceDirs.add(generatedFolder)
+    }
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+
+// Generate lexer and parser
+apply plugin: 'org.jetbrains.grammarkit'
+
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.grammarkit.tasks.GenerateParser
+
+task generateICULexer(type: GenerateLexer) {
+    source "src/main/grammar/icu.flex"
+    skeleton "src/main/grammar/idea-flex.skeleton"
+    targetDir generatedFolder.toString() + "/com/domblack/icu/"
+    targetClass "IcuLexer"
+    purgeOldFiles true
+}
+
+task generateICUParser(type: GenerateParser) {
+    source "src/main/grammar/icu.bnf"
+    targetRoot generatedFolder
+    pathToParser "/com/domblack/icu/IcuParser.java"
+    pathToPsiRoot "/com/domblack/icu/psi"
+    purgeOldFiles true
+}
+
+sourceSets {
+    main {
+        java.srcDirs += generatedFolder
+    }
+}
+
 compileJava {
-    source 'src/main/gen'
+    dependsOn generateICULexer
+    dependsOn generateICUParser
 }
 
 publishPlugin {
-    username intellijPublishUsername
-    password intellijPublishPassword
+    username "no-op"
+    password ""
 }

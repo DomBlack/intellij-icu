@@ -22,9 +22,19 @@ public class IcuBreadcrumbsProvider implements BreadcrumbsProvider {
     @Override
     public String getElementInfo(@NotNull PsiElement element) {
         if (element instanceof IcuBlock) {
-            return ((IcuBlock) element).getID();
+            final String name = ((IcuBlock) element).getName();
+            if (name == null) {
+                return "";
+            } else {
+                return name;
+            }
         } else if (element instanceof IcuMessage) {
-            return ((IcuMessage) element).getID();
+            final String name = ((IcuMessage) element).getName();
+            if (name == null) {
+                return "";
+            } else {
+                return name;
+            }
         }
         throw new IllegalArgumentException("This element should not pass #acceptElement");
     }

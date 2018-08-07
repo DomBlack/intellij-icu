@@ -1,12 +1,24 @@
 <idea-plugin url="https://github.com/DomBlack/intellij-icu">
     <name>ICU</name>
     <id>ICU</id>
-    <vendor url="https://github.com/DomBlack/intellij-icu">Dom Black</vendor>
+    <vendor url="https://github.com/DomBlack/intellij-icu">Dominic Black</vendor>
 
     <description><![CDATA[
-        This plugin gives IntelliJ syntax highlighting for ICU Resource Bundles.
-
+        <p>This plugin gives IntelliJ syntax highlighting for ICU Resource Bundles.</p>
+        <p>
+            <strong>Features</strong>
+            <ul>
+                <li>Syntax Highlighting for both the resource file and the ICU messages.</li>
+                <li>Automatic Formatting Support.</li>
+                <li>Spell checking of messages.</li>
+                <li>Code Folding Support</li>
+                <li>Goto Symbol support.</li>
+                <li>File Structural View.</li>
+            </ul>
+        </p>
+        <p>
         <img src="https://github.com/DomBlack/intellij-icu/blob/master/media/screenshot.png?raw=true" />
+        </p>
     ]]></description>
 
     <category>Languages</category>
@@ -21,8 +33,10 @@
         <lang.commenter language="ICU" implementationClass="com.domblack.icu.IcuCommenter" />
         <lang.braceMatcher language="ICU" implementationClass="com.domblack.icu.IcuPairedBraceMatcher" />
         <lang.formatter language="ICU" implementationClass="com.domblack.icu.IcuFormattingModelBuilder" />
+        <lang.foldingBuilder language="ICU" implementationClass="com.domblack.icu.IcuFoldingBuilder" />
         <colorSettingsPage implementation="com.domblack.icu.IcuColorSettingsPage" />
-        <completion.contributor language="ICU" implementationClass="com.domblack.icu.IcuCompletionContributor" />
+        <!-- FIXME: Figure out how to get this to work correctly -->
+        <!--<completion.contributor language="ICU" implementationClass="com.domblack.icu.IcuCompletionContributor" />-->
         <gotoSymbolContributor implementation="com.domblack.icu.IcuChooseByNameContributor" />
         <annotator language="ICU" implementationClass="com.domblack.icu.IcuAnnotator" />
         <breadcrumbsInfoProvider implementation="com.domblack.icu.IcuBreadcrumbsProvider" />

@@ -11,8 +11,6 @@
     elementTypeClass="com.domblack.icu.psi.IcuElementType"
     tokenTypeClass="com.domblack.icu.psi.IcuTokenType"
 
-    psiImplUtilClass="com.domblack.icu.psi.impl.IcuImplUtil"
-
     tokens = [
         LEFT_BRACE  = 'FILE {'
         RIGHT_BRACE = 'FILE }'
@@ -31,19 +29,17 @@ icuFile ::= languageKey LEFT_BRACE (message | block)* RIGHT_BRACE
 languageKey ::= LANG_ID
 
 block ::= (ID LEFT_BRACE (message | block)* RIGHT_BRACE) {
-    mixin="com.domblack.icu.psi.impl.IcuNamedElementImpl"
+    mixin="com.domblack.icu.psi.impl.IcuNamedBlockImpl"
     implements="com.domblack.icu.psi.IcuNamedElement"
-    methods=[getID getPresentation getName setName getNameIdentifier]
 }
 
 message ::= ID messageBlock {
-    mixin="com.domblack.icu.psi.impl.IcuNamedElementImpl"
+    mixin="com.domblack.icu.psi.impl.IcuNamedMessageImpl"
     implements="com.domblack.icu.psi.IcuNamedElement"
-    methods=[getID getPresentation getName setName getNameIdentifier]
 }
 
 // This is separate for formatting reasons so we can align the left brace!
-messageBlock ::= LEFT_BRACE (QUOTE messageString* QUOTE) (QUOTE messageString* QUOTE)*  RIGHT_BRACE
+messageBlock ::= LEFT_BRACE (QUOTE messageString* QUOTE)+ RIGHT_BRACE
 
 messageString ::= argumentElement | STRING | PLACEHOLDER | VALID_ESCAPE_STRING | INVALID_ESCAPE_STRING
 
@@ -56,16 +52,26 @@ elementFormat ::= newLine_? COMMA newLine_ (simpleFormat | pluralFormat | select
 
 simpleFormat ::= ('number' | 'date' | 'time') newLine_ (COMMA OPTION_NAME)?
 
-pluralFormat ::= 'plural' newLine_ COMMA newLine_ pluralStyle
+pluralFormat ::= 'plural' newLine_ COMMA pluralStyle
 
-selectOrdinalFormat ::= 'selectordinal' newLine_ COMMA newLine_ pluralStyle
+selectOrdinalFormat ::= 'selectordinal' newLine_ COMMA pluralStyle
 
-selectFormat ::= 'select' newLine_ COMMA (newLine_ optionalFormatPattern)+
+selectFormat ::= 'select' newLine_ COMMA optionsBlock
 
-selector ::= (EQUALS NUMBER) | OPTION_NAME
+selector ::= (EQUALS NUMBER) | OPTION_KEYWORD | OPTION_NAME
 
-optionalFormatPattern ::= selector newLine_ ARG_LEFT_BRACE (newLine_ messageString)* newLine_ ARG_RIGHT_BRACE
+// These two rules are for block formatting
+optionContentList     ::= (newLine_ messageString)*
+optionContentsPerLine ::= (QUOTE optionContentList)+
+optionContents        ::= ((QUOTE optionContentsPerLine) | optionContentList)
 
-offset ::= 'offset:' newLine_ NUMBER
+optionalFormatPattern ::= selector newLine_ ARG_LEFT_BRACE optionContents ARG_RIGHT_BRACE
 
-pluralStyle ::= offset? (newLine_ optionalFormatPattern)+
+// These three rules are purely to get block formatting working correctly
+optionsList    ::= (newLine_ optionalFormatPattern)+
+optionsPerLine ::= QUOTE optionsList
+optionsBlock   ::= ((QUOTE optionsPerLine) | optionsList)
+
+offset ::= newLine_ OFFSET_KW newLine_ NUMBER
+
+pluralStyle ::= offset? optionsBlock

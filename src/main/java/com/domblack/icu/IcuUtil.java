@@ -27,7 +27,7 @@ public class IcuUtil {
                 Collection<IcuMessage> ids = PsiTreeUtil.findChildrenOfType(icuFile, IcuMessage.class);
 
                 for (IcuMessage block : ids) {
-                    if (key.equals(block.getID())) {
+                    if (key.equals(block.getName())) {
                         result.add(block);
                     }
                 }
