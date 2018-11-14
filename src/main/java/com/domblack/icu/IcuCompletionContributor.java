@@ -1,5 +1,6 @@
 package com.domblack.icu;
 
+import com.domblack.icu.psi.IcuTokenType;
 import com.domblack.icu.psi.IcuTypes;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -16,7 +17,6 @@ public class IcuCompletionContributor extends CompletionContributor {
         extend(
                 CompletionType.BASIC,
                 PlatformPatterns.psiFile(),
-//                PlatformPatterns.psiElement(IcuTypes.LANG_ID),
                 new CompletionProvider<CompletionParameters>() {
                     @Override
                     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
@@ -42,7 +42,6 @@ public class IcuCompletionContributor extends CompletionContributor {
             if (parent instanceof PsiErrorElement) {
                 final PsiErrorElement error = (PsiErrorElement)parent;
 
-
                 if (error.getErrorDescription().contains("plural, select or selectordinal expected")) {
                     result.addElement(LookupElementBuilder.create("number"));
                     result.addElement(LookupElementBuilder.create("date"));
@@ -50,10 +49,10 @@ public class IcuCompletionContributor extends CompletionContributor {
                     result.addElement(LookupElementBuilder.create("plural"));
                     result.addElement(LookupElementBuilder.create("select"));
                     result.addElement(LookupElementBuilder.create("selectordinal"));
-                    return;
                 }
             }
         }
+
         super.fillCompletionVariants(parameters, result);
     }
 }

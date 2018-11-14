@@ -66,6 +66,6 @@ public class IcuFoldingBuilder extends FoldingBuilderEx {
 
     @Override
     public boolean isCollapsedByDefault(@NotNull ASTNode node) {
-        return true;
+        return false;
     }
 }

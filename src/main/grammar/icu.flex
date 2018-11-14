@@ -107,6 +107,7 @@ END_OF_LINE_COMMENT=("//")[^\r\n]*
     {QUOTE}          { return IcuTypes.QUOTE; }
     {COMMA}          { yybegin(IN_ARGUMENT_PARAMS); return IcuTypes.COMMA; }
     {FORMAT}         { return IcuTypes.FORMAT_TYPE; }
+    {ID}             { return TokenType.BAD_CHARACTER; }
 }
 
 <IN_ARGUMENT_PARAMS> {

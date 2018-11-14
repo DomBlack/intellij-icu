@@ -14,12 +14,26 @@
                 <li>Code Folding Support</li>
                 <li>Goto Symbol support.</li>
                 <li>File Structural View.</li>
+                <li>Code Completion for parameter formatting.</li>
             </ul>
         </p>
         <p>
         <img src="https://github.com/DomBlack/intellij-icu/blob/master/media/screenshot.png?raw=true" />
         </p>
     ]]></description>
+
+    <change-notes><![CDATA[
+    <p>1.1.0</p>
+    <ul>
+        <li>Fixed files always starting in a fully folded state</li>
+        <li>Added code completion for format types</li>
+        <li>Added support for all versions of IntelliJ from 2018.1 onwards</li>
+    </ul>
+    <br />
+    ]]></change-notes>
+
+    <!-- See http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
+    <idea-version since-build="181" />
 
     <category>Languages</category>
 
@@ -35,8 +49,7 @@
         <lang.formatter language="ICU" implementationClass="com.domblack.icu.IcuFormattingModelBuilder" />
         <lang.foldingBuilder language="ICU" implementationClass="com.domblack.icu.IcuFoldingBuilder" />
         <colorSettingsPage implementation="com.domblack.icu.IcuColorSettingsPage" />
-        <!-- FIXME: Figure out how to get this to work correctly -->
-        <!--<completion.contributor language="ICU" implementationClass="com.domblack.icu.IcuCompletionContributor" />-->
+        <completion.contributor language="ICU" implementationClass="com.domblack.icu.IcuCompletionContributor" />
         <gotoSymbolContributor implementation="com.domblack.icu.IcuChooseByNameContributor" />
         <annotator language="ICU" implementationClass="com.domblack.icu.IcuAnnotator" />
         <breadcrumbsInfoProvider implementation="com.domblack.icu.IcuBreadcrumbsProvider" />

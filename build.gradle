@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.domblack'
-version '1.0.1'
+version '1.1.0'
 
 def generatedFolder = file("src/main/generated")
 
@@ -25,6 +25,8 @@ intellij {
     version '2018.2'
 
     pluginName 'ICU'
+
+    updateSinceUntilBuild = false
 }
 
 apply plugin: 'idea'
